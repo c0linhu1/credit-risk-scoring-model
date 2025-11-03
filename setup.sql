@@ -86,9 +86,7 @@ DELIMITER ','
 -- telling PorstgreSQL to skip first row bc its just column names 
 CSV HEADER;
 
--- Now let's verify the data loaded correctly!
--- SELECT: This command retrieves data so you can see it
--- Think of SELECT as asking the database a question
+# verification we copied data correctly 
 SELECT 
     -- COUNT(*): How many rows are in the table?
     -- The * means "count everything"
