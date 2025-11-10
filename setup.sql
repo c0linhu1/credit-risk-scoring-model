@@ -5,6 +5,7 @@ creates staging table, loads Kaggle CSV data, and builds normalized 3-table sche
 
 
 -- dropping table if already exists so we can run over and over again with a clean base
+    -- CASCADE deletes objects that depend on the table 
 DROP TABLE IF EXISTS defaults CASCADE;
 DROP TABLE IF EXISTS loans CASCADE;
 DROP TABLE IF EXISTS customers CASCADE;
@@ -90,14 +91,23 @@ CSV HEADER;
 
 -- Verify data loaded correctly
 SELECT 
+    -- counting total number of rows
     COUNT(*) as total_records,
+    -- youngest person in dataset
     MIN(person_age) as min_age,
+    -- oldest person in dataset
     MAX(person_age) as max_age,
+    -- smallest loan in dataset
     MIN(loan_amnt) as min_loan,
+    -- largest loan in dataset
     MAX(loan_amnt) as max_loan,
+    -- total # of defaults because all the defaults are set to value of 1
     SUM(loan_status) as total_defaults,
+    -- calculating default rate percentage
     ROUND(100.0 * SUM(loan_status) / COUNT(*), 2) as default_rate_pct
+-- selecting data FROM the credit_risk_staging table after copying data from csv into that table    
 FROM credit_risk_staging;
+
 
 SELECT 
     'person_age' as column_name,
