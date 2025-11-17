@@ -141,9 +141,13 @@ SELECT
     person_age,
     person_income,
     person_home_ownership,
+    -- COALESCE: if person_emp_length is null, replace with 0 otherwise use the actual value
     COALESCE(person_emp_length, 0) as person_emp_length,
     cb_person_default_on_file as historical_default,
     cb_person_cred_hist_length as credit_history_length,
+    -- I want to add region data to this dataset so we can experiment
+    -- and we can analyze different aspects based on region
+    -- This basically will generate a random int value from 0-4 
     CASE (RANDOM() * 5)::INT
         WHEN 0 THEN 'Northeast'
         WHEN 1 THEN 'Southeast'
@@ -153,15 +157,20 @@ SELECT
     END as region
 FROM credit_risk_staging;
 
+-- creating a primary key makes sure that every customer has a unique id - preventing duplicates
+-- also apparently queries are faster with primary keys and we can join tables easier
 ALTER TABLE customers ADD PRIMARY KEY (customer_id);
--- Removed age constraint since data has ages > 100
+
+-- making sure we dont have any negative values in our data - would be impossible making data inaccurate
 ALTER TABLE customers ADD CONSTRAINT chk_income CHECK (person_income >= 0);
 ALTER TABLE customers ADD CONSTRAINT chk_emp_length CHECK (person_emp_length >= 0);
 
+-- ONLY CREATE INDEXES ON COLUMNS WE OFTEN FILTER, JOIN ON, ORDER OR GROUP BY, AND HAS MANY UNIQUE VALUES 
 CREATE INDEX idx_customers_income ON customers(person_income);
 CREATE INDEX idx_customers_age ON customers(person_age);
 CREATE INDEX idx_customers_region ON customers(region);
 
+-- this is info to remind myself 
 COMMENT ON TABLE customers IS 'Customer demographic and credit history information';
 COMMENT ON COLUMN customers.customer_id IS 'Unique customer identifier (Primary Key)';
 COMMENT ON COLUMN customers.historical_default IS 'Y = previous default history, N = no history';
