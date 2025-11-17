@@ -1,0 +1,152 @@
+ROW_NUMBER()
+SELECT 
+    employee,
+    salary,
+    ROW_NUMBER() OVER (ORDER BY salary DESC) AS row_num
+FROM employees;
+
+
+| employee | salary | row_num |
+| -------- | ------ | ------- |
+| A        | 100k   | 1       |
+| B        | 90k    | 2       |
+| C        | 90k    | 3       |
+| D        | 80k    | 4       |
+
+
+
+RANK()
+SELECT 
+    employee,
+    salary,
+    RANK() OVER (ORDER BY salary DESC) AS rank
+FROM employees;
+
+| employee | salary | rank |
+| -------- | ------ | ---- |
+| A        | 100k   | 1    |
+| B        | 90k    | 2    |
+| C        | 90k    | 2    |
+| D        | 80k    | 4    |
+
+
+***THE DIFFERENCE BETWEEN ROW_NUMBER() and RANK() IS THAT ROW_NUMBER ASSIGNS A **UNIQUE**
+SEQUENTIAL NUMBER TO EACH ROW WHILE RANK() WILL GIVE ROWS WITH THE SAME VALUE THE SAME
+RANK
+
+
+PARTITION BY (grouped window)
+SELECT
+    region,
+    customer_id,
+    person_income,
+    SUM(person_income) OVER (PARTITION BY region) AS region_total_income
+FROM customers;
+
+| region | customer_id | person_income | region_total_income |
+| ------ | ----------- | ------------- | ------------------- |
+| West   | 1           | 50,000        | 130,000             |
+| West   | 2           | 80,000        | 130,000             |
+| East   | 3           | 60,000        | 100,000             |
+| East   | 4           | 40,000        | 100,000             |
+
+*** PARTITION BY IS LIKE GROUP BY BUT IT STILL INCLUDES ALL THE ROWS
+
+
+Running Total (ORDER BY inside window)
+SELECT
+    loan_id,
+    loan_amnt,
+    SUM(loan_amnt) OVER (ORDER BY loan_id) AS running_total
+FROM loans;
+
+| loan_id | loan_amnt | running_total |
+| ------- | --------- | ------------- |
+| 101     | 5000      | 5000          |
+| 102     | 6000      | 11000         |
+| 103     | 8000      | 19000         |
+| 104     | 4000      | 23000         |
+
+
+
+LAG() (previous row value)
+SELECT
+    loan_id,
+    loan_amnt,
+    LAG(loan_amnt) OVER (ORDER BY loan_id) AS previous_loan
+FROM loans;
+
+original:                                   
+| loan_id | loan_amnt |                     
+| ------- | --------- |
+| 101     | 5,000     |
+| 102     | 6,000     |
+| 103     | 8,000     |
+| 104     | 4,000     |
+
+after:  
+| loan_id | loan_amnt | previous_loan |
+| ------- | --------- | ------------- |
+| 101     | 5,000     | NULL          |
+| 102     | 6,000     | 5,000         |
+| 103     | 8,000     | 6,000         |
+| 104     | 4,000     | 8,000         |
+
+
+Moving Average (3-row window)
+SELECT
+    loan_id,
+    loan_amnt,
+    AVG(loan_amnt) OVER (
+        ORDER BY loan_id
+        ROWS BETWEEN 2 PRECEDING AND CURRENT ROW
+    ) AS moving_avg
+FROM loans;
+
+| loan_id | loan_amnt | rows used           | moving_avg |
+| ------- | --------- | ------------------- | ---------- |
+| 101     | 5,000     | 5,000               | 5000       |
+| 102     | 6,000     | 5,000, 6,000        | 5500       |
+| 103     | 8,000     | 5,000, 6,000, 8,000 | 6333       |
+| 104     | 4,000     | 6,000, 8,000, 4,000 | 6000       |
+
+
+*** im guessing that ROWS BETWEEN 2 PRECEDING AND CURRENT ROW is specifying the 
+row we want the average of - also weird that in sql rows are columns 
+
+
+Percentile (PERCENT_RANK)
+SELECT
+    loan_amnt,
+    PERCENT_RANK() OVER (ORDER BY loan_amnt) AS pct
+FROM loans;
+
+| loan_amnt | rank position | pct  |
+| --------- | ------------- | ---- |
+| 4,000     | lowest        | 0.00 |
+| 5,000     | 2nd           | 0.33 |
+| 6,000     | 3rd           | 0.66 |
+| 8,000     | highest       | 1.00 |
+
+*** for PERCENT_RANK the ORDER BY value will rank the values using suqential numbers 
+and PERCENT_RANK will do the calculation of (rank - 1) / (total_rows - 1)
+
+
+Actual Example:
+SELECT
+    region,
+    customer_id,
+    person_income,
+    RANK() OVER (PARTITION BY region ORDER BY person_income DESC) AS region_income_rank
+FROM customers;
+
+| region | customer_id | income | region_income_rank |
+| ------ | ----------- | ------ | ------------------ |
+| West   | 2           | 80,000 | 1                  |
+| West   | 1           | 50,000 | 2                  |
+| East   | 3           | 60,000 | 1                  |
+| East   | 4           | 40,000 | 2                  |
+
+*** Here we are PARTITIONing BY region so for each region the customers and their income
+have separate ranks - i am assuming that if the order was ASC then the rank 1 woukd start 
+at the lowest income value

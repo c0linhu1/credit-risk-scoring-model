@@ -108,12 +108,14 @@ SELECT
 -- selecting data FROM the credit_risk_staging table after copying data from csv into that table    
 FROM credit_risk_staging;
 
-
-SELECT 
+-- trying to see nulls in important columns
+SELECT
     'person_age' as column_name,
+    -- COUNT(*) = total rows, COUNT(person_age) = non-null rows
     COUNT(*) - COUNT(person_age) as null_count,
     ROUND(100.0 * (COUNT(*) - COUNT(person_age)) / COUNT(*), 2) as null_pct
 FROM credit_risk_staging
+-- we use UNION ALL because we want all columns 
 UNION ALL
 SELECT 'person_income', 
        COUNT(*) - COUNT(person_income), 
@@ -130,11 +132,11 @@ SELECT 'loan_int_rate',
        ROUND(100.0 * (COUNT(*) - COUNT(loan_int_rate)) / COUNT(*), 2)
 FROM credit_risk_staging;
 
-COMMENT ON TABLE credit_risk_staging IS 'Staging table for raw Kaggle credit risk dataset';
 
 -- Create customers table
 CREATE TABLE customers AS
 SELECT 
+    -- window function - assigning numbers for customer_id to randomly ordered customers
     ROW_NUMBER() OVER (ORDER BY RANDOM()) as customer_id,
     person_age,
     person_income,
