@@ -75,18 +75,11 @@ CREATE TABLE credit_risk_staging (
     
 );
 
--- COPY: Special PostgreSQL command to load data from a file into a table
-    -- faster than INSERT statements for larger amounts of data
-COPY credit_risk_staging
-
--- loading rows from csv file 
-FROM '/Users/Colin/Downloads/SQLPROJECT/credit_risk_dataset.csv'
-
--- the csv files separates each character with ','
-DELIMITER ','
-
--- telling PorstgreSQL to skip first row bc its just column names 
-CSV HEADER;
+\copy credit_risk_staging 
+FROM '/Users/colin/Downloads/SQLproject/credit_risk_dataset.csv' 
+DELIMITER ',' 
+-- skip header row in csv
+CSV HEADER
 
 
 -- Verify data loaded correctly
