@@ -17,3 +17,5 @@ Analyzing loan default patterns to identify key risk factors for lending decisio
     23,65500,RENT,4.0,MEDICAL,C,35000,15.23,1,0.53,N,2
     24,54400,RENT,8.0,MEDICAL,C,35000,14.27,1,0.55,Y,4
 
+    'loan_intent': {['DEBTCONSOLIDATION', 'EDUCATION', 'HOMEIMPROVEMENT', 'MEDICAL', 'PERSONAL', 'VENTURE']}
+    'loan_grade': {['A', 'B', 'C', 'D', 'E', 'F', 'G']} (low risk to high risk)
