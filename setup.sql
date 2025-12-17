@@ -114,3 +114,4 @@ SELECT 'loan_int_rate',
        ROUND(100.0 * (COUNT(*) - COUNT(loan_int_rate)) / COUNT(*), 2)
 FROM loans;
 
+--SELECT * FROM loans LIMIT 10;
