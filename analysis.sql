@@ -13,7 +13,9 @@ Using
  - cb_person_cred_hist_length
 */
 
-DROP VIEW IF EXISTS overall_stats, default_rate_by_age, default_rate_by_income;
+DROP VIEW IF EXISTS overall_stats, default_rate_by_age, default_rate_by_income, default_rate_by_home_ownership,
+default_rate_by_emp_length, default_rate_by_loan_intent, default_rate_by_dti, default_rate_by_past_defaults, 
+default_rate_by_credit_history_length;
 
 
 -- Finding overall stats - creating overall (average) stats 
@@ -46,7 +48,7 @@ SELECT
     ROUND(100.0 * SUM(loan_status) / COUNT(*), 2) as overall_default_rate
 FROM loans;
 
---SELECT * FROM overall_stats
+--SELECT * FROM overall_stats;
 
 CREATE VIEW default_rate_by_age AS
 SELECT
@@ -57,6 +59,8 @@ SELECT
         WHEN person_age BETWEEN 46 AND 55 THEN '46-55'
         WHEN person_age > 55 THEN '55+'
     END AS age_range,
+    COUNT(*) AS total_loans,
+    SUM(loan_status) AS defaults,
     ROUND(100.0 * SUM(loan_status) / COUNT(*), 2) as default_rate
 FROM loans
 GROUP BY age_range
@@ -82,9 +86,113 @@ SELECT
         WHEN person_income BETWEEN 100000 AND 149999 THEN '100k-150k'
         WHEN person_income >= 150000 THEN '150k+'
     END AS income_range,
+    COUNT(*) AS total_loans,
+    SUM(loan_status) AS defaults,
     ROUND(100.0 * SUM(loan_status) / COUNT(*), 2) as default_rate
 FROM loans
 GROUP BY row_num, income_range
 ORDER BY row_num ASC;
 
 --SELECT * FROM default_rate_by_income;
+
+CREATE VIEW default_rate_by_home_ownership AS
+SELECT
+    person_home_ownership AS home_type,
+    COUNT(*) AS total_loans,
+    SUM(loan_status) AS defaults,
+    ROUND(100.0 * SUM(loan_status) / COUNT(*), 2) as default_rate
+FROM loans
+GROUP BY home_type
+ORDER BY home_type;
+
+--SELECT * FROM default_rate_by_home_ownership;
+
+CREATE VIEW default_rate_by_emp_length AS 
+SELECT
+    CASE
+        WHEN person_emp_length BETWEEN 0 AND 2 THEN 1
+        WHEN person_emp_length BETWEEN 3 AND 5 THEN 2
+        WHEN person_emp_length BETWEEN 6 AND 10 THEN 3
+        WHEN person_emp_length > 10 THEN 4
+    END AS row_num,
+    CASE
+        WHEN person_emp_length BETWEEN 0 AND 2 THEN '0-2 yrs'
+        WHEN person_emp_length BETWEEN 3 AND 5 THEN '3-5 yrs'
+        WHEN person_emp_length BETWEEN 6 AND 10 THEN '6-10 yrs'
+        WHEN person_emp_length > 10 THEN '10+ yrs'
+    END AS employment_length,
+    COUNT(*) AS total_loans,
+    SUM(loan_status) AS defaults,
+    ROUND(100.0 * SUM(loan_status) / COUNT(*), 2) as default_rate
+FROM loans
+GROUP BY row_num, employment_length
+ORDER BY row_num;
+
+--SELECT * FROM default_rate_by_emp_length;
+
+CREATE VIEW default_rate_by_loan_intent AS 
+SELECT 
+    loan_intent,
+    COUNT(*) AS total_loans,
+    SUM(loan_status) AS defaults,
+    ROUND(100.0 * SUM(loan_status) / COUNT(*), 2) as default_rate
+FROM loans
+GROUP BY loan_intent
+ORDER BY loan_intent;
+
+--SELECT * FROM default_rate_by_loan_intent;
+
+CREATE VIEW default_rate_by_dti AS
+SELECT
+    CASE
+        WHEN loan_percent_income BETWEEN 0 AND 0.1 THEN '0-10%'
+        WHEN loan_percent_income BETWEEN 0.1001 AND 0.2 THEN '10-20%'
+        WHEN loan_percent_income BETWEEN 0.2001 AND 0.3 THEN '20-30%'
+        WHEN loan_percent_income BETWEEN 0.3001 AND 0.4 THEN '30-40%'
+        WHEN loan_percent_income BETWEEN 0.4001 AND 0.5 THEN '40-50%'
+        WHEN loan_percent_income > 0.5 THEN '50%+'
+    END AS dti_bracket,
+    COUNT(*) AS total_loans,
+    SUM(loan_status) AS defaults,
+    ROUND(100.0 * SUM(loan_status) / COUNT(*), 2) AS default_rate
+FROM loans
+GROUP BY dti_bracket
+ORDER BY dti_bracket;
+
+--SELECT * FROM default_rate_by_dti;
+
+CREATE VIEW default_rate_by_past_defaults AS
+SELECT  
+    cb_person_default_on_file AS past_default,
+    COUNT(*) as total_loans,
+    SUM(loan_status) as defaults,
+    ROUND(100.0 * SUM(loan_status) / COUNT(*), 2) as default_rate
+FROM loans
+GROUP BY past_default;
+
+--SELECT * FROM default_rate_by_past_defaults;
+
+CREATE VIEW default_rate_by_credit_history_length AS 
+SELECT
+    CASE 
+        WHEN cb_person_cred_hist_length BETWEEN 0 AND 2 THEN 1
+        WHEN cb_person_cred_hist_length BETWEEN 3 AND 5 THEN 2
+        WHEN cb_person_cred_hist_length BETWEEN 6 AND 10 THEN 3
+        WHEN cb_person_cred_hist_length BETWEEN 11 AND 20 THEN 4
+        WHEN cb_person_cred_hist_length > 20 THEN 5
+    END AS row_num,
+    CASE 
+        WHEN cb_person_cred_hist_length BETWEEN 0 AND 2 THEN '0-2 yrs'
+        WHEN cb_person_cred_hist_length BETWEEN 3 AND 5 THEN '3-5 yrs'
+        WHEN cb_person_cred_hist_length BETWEEN 6 AND 10 THEN '6-10 yrs'
+        WHEN cb_person_cred_hist_length BETWEEN 11 AND 20 THEN '11-20 yrs'
+        WHEN cb_person_cred_hist_length > 20 THEN '20+ yrs'
+    END AS credit_history_range,
+    COUNT(*) as total_loans,
+    SUM(loan_status) as defaults,
+    ROUND(100.0 * SUM(loan_status) / COUNT(*)) as default_rate
+FROM loans
+GROUP BY row_num, credit_history_range
+ORDER BY row_num;
+
+--SELECT * FROM default_rate_by_credit_history_length;

@@ -20,7 +20,7 @@ CREATE TABLE loans (
     
     -- person_home_ownership: do they rent, own, have mortgage, etc.
     -- max 20 characters
-    -- ex: "RENT", "OWN", "MORTGAGE", "OTHER"
+    -- ['MORTGAGE', 'OTHER', 'OWN', 'RENT']
     person_home_ownership VARCHAR(20),
     
     -- person_emp_length: How long been employed (yrs)

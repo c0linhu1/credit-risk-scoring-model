@@ -15,11 +15,16 @@ def loan_grade_distribution(data):
     grade_distribution = data['loan_grade'].unique()
     print(sorted(grade_distribution))
 
+def home_ownership(data):
+    home_type = data['person_home_ownership'].unique()
+    print(sorted(home_type))
+
 def main():
     
     data = load_data(FILE)
     loan_intent_reasons(data)
     loan_grade_distribution(data)
+    home_ownership(data)
 
 
 
