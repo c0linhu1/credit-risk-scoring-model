@@ -15,7 +15,7 @@ Using
 
 
 -- Finding overall stats - creating overall (average) stats 
-CREATE VIEW overall_stats AS 
+--CREATE VIEW overall_stats AS 
 SELECT
     ROUND(AVG(person_age), 2) as avg_age,
     ROUND(AVG(person_income), 2) as avg_income,
