@@ -90,6 +90,18 @@ SELECT
 -- selecting data FROM the loans table after copying data from csv into that table    
 FROM loans;
 
+
+/*
+features
+ - person_age
+ - person_income
+ - person_home_ownership
+ - person_emp_length
+ - loan_intent
+ - loan_percent_income (rather than doing loan amount because this normalizes for income)
+ - cb_person_default_on_file
+ - cb_person_cred_hist_length
+*/
 -- trying to see nulls in important columns
 SELECT
     'person_age' as column_name,
@@ -104,14 +116,33 @@ SELECT 'person_income',
        ROUND(100.0 * (COUNT(*) - COUNT(person_income)) / COUNT(*), 2)
 FROM loans
 UNION ALL
+SELECT 'person_home_ownership', 
+       COUNT(*) - COUNT(person_home_ownership),
+       ROUND(100.0 * (COUNT(*) - COUNT(person_home_ownership)) / COUNT(*), 2)
+FROM loans
+UNION ALL
 SELECT 'person_emp_length', 
        COUNT(*) - COUNT(person_emp_length),
        ROUND(100.0 * (COUNT(*) - COUNT(person_emp_length)) / COUNT(*), 2)
 FROM loans
 UNION ALL
-SELECT 'loan_int_rate', 
-       COUNT(*) - COUNT(loan_int_rate),
-       ROUND(100.0 * (COUNT(*) - COUNT(loan_int_rate)) / COUNT(*), 2)
+SELECT 'loan_intent',
+    COUNT(*) - COUNT(loan_intent),
+    ROUND(100.0 * (COUNT(*) - COUNT(loan_intent)) / COUNT(*), 2)
+FROM loans
+UNION ALL
+SELECT 'loan_percent_income ',
+    COUNT(*) - COUNT(loan_percent_income ),
+    ROUND(100.0 * (COUNT(*) - COUNT(loan_percent_income)) / COUNT(*), 2)
+FROM loans
+UNION ALL
+SELECT 'cb_person_default_on_file ',
+    COUNT(*) - COUNT(cb_person_default_on_file ),
+    ROUND(100.0 * (COUNT(*) - COUNT(cb_person_default_on_file)) / COUNT(*), 2)
+FROM loans
+UNION ALL
+SELECT 'cb_person_cred_hist_length ',
+    COUNT(*) - COUNT(cb_person_cred_hist_length ),
+    ROUND(100.0 * (COUNT(*) - COUNT(cb_person_cred_hist_length)) / COUNT(*), 2)
 FROM loans;
-
 --SELECT * FROM loans LIMIT 10;

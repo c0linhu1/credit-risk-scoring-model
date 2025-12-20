@@ -11,7 +11,7 @@ from dotenv import load_dotenv
 from sqlalchemy import create_engine
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
-
+from sklearn.preprocessing import StandardScaler, LabelEncoder
 
 load_dotenv()
 

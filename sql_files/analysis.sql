@@ -2,7 +2,7 @@
 analysis.sql
 Analyzing different characteristics of loans dataset - see which have higher default rates
 
-Using 
+Using features
  - person_age
  - person_income
  - person_home_ownership
@@ -121,10 +121,12 @@ SELECT
         WHEN person_emp_length BETWEEN 6 AND 10 THEN '6-10 yrs'
         WHEN person_emp_length > 10 THEN '10+ yrs'
     END AS employment_length,
-    COUNT(*) AS total_loans,
+    -- 'person_emp_length' only column w nulls
+    COUNT(person_emp_length) AS total_loans,
     SUM(loan_status) AS defaults,
-    ROUND(100.0 * SUM(loan_status) / COUNT(*), 2) as default_rate
+    ROUND(100.0 * SUM(loan_status) / COUNT(person_emp_length), 2) as default_rate
 FROM loans
+WHERE person_emp_length IS NOT NULL
 GROUP BY row_num, employment_length
 ORDER BY row_num;
 
