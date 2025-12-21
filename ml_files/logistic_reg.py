@@ -13,7 +13,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.compose import ColumnTransformer
-from sklearn.metrics import accuracy_score, precision_score, recall_score, roc_auc_score, confusion_matrix, classification_report
+from sklearn.metrics import accuracy_score, precision_score, recall_score, roc_auc_score, confusion_matrix, classification_report, roc_curve
 from sklearn.model_selection import cross_val_score
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -139,8 +139,45 @@ def confusion_matrix_plot(y_test, y_pred):
     plt.tight_layout()
     plt.show()
     print('Viz saved')
-                
 
+def roc_curve_plot(y_test, y_pred_probability):
+    """Plotting the roc curve"""
+    # false positive rate, true positive rate
+    fpr, tpr, thresholds = roc_curve(y_test, y_pred_probability)
+
+    # area under the curve
+    auc = roc_auc_score(y_test, y_pred_probability)
+
+    plt.figure(figsize = (10, 6))
+    plt.plot(fpr, tpr, color = 'blue', linewidth = 2, label = f"ROC Curve (AUC = {auc:.4f})")
+    plt.plot([0,1], [0,1], color = 'gray', linestyle = '--', label = 'Random Guess')
+
+    plt.xlabel('False Positive Rate')
+    plt.ylabel('True Positive Rate')
+    plt.title('ROC Curve - Logistic Regression')
+
+    plt.legend(loc = 'lower right')
+    plt.tight_layout()
+    #plt.savefig('ROC_Curve.png')
+    plt.show()
+
+def feature_importance_plot(coef_df):
+    """Using a bar chart to plot the feature importance"""
+
+    sorted = coef_df.sort_values('Coefficient', key = abs, ascending = True)
+
+    plt.figure(figsize = (10,6))
+    colors = ['Red' if x > 0 else 'Green'for x in sorted['Coefficient']]
+
+    plt.barh(sorted['Feature'], sorted['Coefficient'], color = colors)
+
+    plt.xlabel('Coefficient')
+    plt.ylabel('Feature')
+    plt.yticks(fontsize = 7)
+    plt.title('Feature Importance - Logistic Regression\n(Red = Increases Default Risk | Green = Decreases Default Risk)')
+    plt.tight_layout()
+    # plt.savefig('Feature_Importance_Barplot')
+    plt.show()
 def main():
     data = get_data()
     print(data.head())
@@ -151,5 +188,7 @@ def main():
     cross_validation(X_full_processed, y, model)
 
     confusion_matrix_plot(y_test, y_pred_test)
+    roc_curve_plot(y_test, y_pred_test_probability)
+    feature_importance_plot(coef_df)
 if __name__ == "__main__":
     main()
