@@ -67,7 +67,7 @@ def train_evaluate_model(X, y):
 
     # this returns the qualitative feature names as a numpy array - need to convert to list 
     ql_f_names = preprocessor.named_transformers_['ql_f'].get_feature_names_out(qualitative_features)
-    print(ql_f_names)
+    # print(ql_f_names)
     all_feature_names = quantitative_features + list(ql_f_names)
 
     # default trees for random forest is 100 - as you increase trees, accuracy increases but less and less
@@ -164,7 +164,7 @@ def feature_importance_plot(importance_df):
     plt.yticks(fontsize = 7)
     plt.title('Feature Importance')
     plt.tight_layout()
-    # plt.savefig('Feature_Importance.png')
+    plt.savefig('Feature_Importance.png')
     plt.show()
 def main():
     data = get_data()
