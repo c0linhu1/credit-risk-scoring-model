@@ -174,7 +174,7 @@ def feature_importance_plot(coef_df):
     plt.xlabel('Coefficient')
     plt.ylabel('Feature')
     plt.yticks(fontsize = 7)
-    plt.title('Feature Importance - Logistic Regression\n(Red = Increases Default Risk | Green = Decreases Default Risk)')
+    plt.title('Feature Importance\n(Red = Increases Default Risk | Green = Decreases Default Risk)')
     plt.tight_layout()
     # plt.savefig('Feature_Importance_Barplot')
     plt.show()
