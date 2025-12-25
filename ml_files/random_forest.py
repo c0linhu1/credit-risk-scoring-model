@@ -1,3 +1,10 @@
+"""
+random_forest.py
+Using random forest classification to predict loan defaults
+Connects to PostgreSQL db instead of pulling from csv file
+"""
+
+
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
