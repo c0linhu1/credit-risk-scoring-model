@@ -10,6 +10,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.compose import ColumnTransformer
 from sklearn.metrics import accuracy_score, precision_score, recall_score, roc_auc_score, confusion_matrix, classification_report, roc_curve
+from sklearn.inspection import permutation_importance
 
 load_dotenv()
 
@@ -89,19 +90,18 @@ def train_evaluate_model(X, y):
     print(f"\nClassification Report:")
     print(classification_report(y_test, y_pred_test))
 
-    print(f"\nFeature Coefficients (Impact on Default Probability):")
-    importance_df = pd.DataFrame(
-        {
-            'Feature': all_feature_names,
-            'Importance': model.feature_importances_
-        }
-    ).sort_values('Importance', ascending = False)
+    print(f"\nFeature Importance (which features have the most weight when making predictions)")
+    perm_importance = permutation_importance(model, X_test_processed, y_test, 
+                                             n_repeats = 10, random_state = 42, n_jobs = -1)
+    perm_importance_df = pd.DataFrame({
+        'Feature': all_feature_names,
+        'Importance': perm_importance.importances_mean
+    }).sort_values('Importance', ascending = False)
 
-    for feature, importance in zip(importance_df['Feature'], importance_df['Importance']):
+    for feature, importance in zip(perm_importance_df['Feature'], perm_importance_df['Importance']):
         print(f"{feature} {importance:.4f}")
 
-
-    return X_full_processed, y, model, y_test, y_pred_test, y_pred_test_probability, importance_df
+    return X_full_processed, y, model, y_test, y_pred_test, y_pred_test_probability, perm_importance_df
 
 def cross_validation(X_full_processed, y, model):
     """Running 5-fold CV to verify model performance"""
@@ -153,9 +153,9 @@ def roc_curve_plot(y_test, y_pred_test_probability):
     # plt.savefig('ROC_Curve.png')
     plt.show()
 
-def feature_importance_plot(importance_df):
+def feature_importance_plot(perm_importance_df):
     """Using a bar chart to plot the feature importance"""
-    sorted = importance_df.sort_values('Importance', ascending = True)
+    sorted = perm_importance_df.sort_values('Importance', ascending = True)
 
     plt.figure(figsize = (10, 6))
     plt.barh(sorted['Feature'], sorted['Importance'], color = 'blue')
@@ -166,14 +166,16 @@ def feature_importance_plot(importance_df):
     plt.tight_layout()
     # plt.savefig('Feature_Importance.png')
     plt.show()
+
 def main():
     data = get_data()
     print(data.head())
     X, y = data_prep(data)
-    X_full_processed, y, model, y_test, y_pred_test, y_pred_test_probability, importance_df = train_evaluate_model(X, y)
+    X_full_processed, y, model, y_test, y_pred_test, y_pred_test_probability, perm_importance_df = train_evaluate_model(X, y)
     cross_validation(X_full_processed, y, model)
     confusion_matrix_plot(y_test, y_pred_test)
     roc_curve_plot(y_test, y_pred_test_probability)
-    feature_importance_plot(importance_df)
+    feature_importance_plot(perm_importance_df)
+
 if __name__ == '__main__':
     main()
