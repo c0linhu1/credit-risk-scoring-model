@@ -164,7 +164,7 @@ def feature_importance_plot(importance_df):
     plt.yticks(fontsize = 7)
     plt.title('Feature Importance')
     plt.tight_layout()
-    plt.savefig('Feature_Importance.png')
+    # plt.savefig('Feature_Importance.png')
     plt.show()
 def main():
     data = get_data()
