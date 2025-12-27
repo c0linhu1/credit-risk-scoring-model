@@ -49,7 +49,7 @@ def data_prep(data):
 
     return X, y
 
-def train_evaluate_modek(X, y):
+def train_evaluate_model(X, y):
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.2, random_state = 42)
 
     quantitative_features = ['person_age', 'person_income', 'person_emp_length',
@@ -97,13 +97,27 @@ def train_evaluate_modek(X, y):
     print(f"\nClassification Report:")
     print(classification_report(y_test, y_pred_test))
 
-    
+    print(f"\nFeature Importance (which features have the most weight when making predictions)")
+    perm_importance = permutation_importance(model, X_test_processed, y_test,
+                                              n_repeats = 10, n_jobs = -1, random_state = 42)
+    perm_importance_df = pd.DataFrame({
+        'Feature': all_feature_names,
+        'Importance': perm_importance.importances_mean
+    }).sort_values('Importance', ascending = False)
 
+    for feature, importance in zip(perm_importance_df['Feature'], perm_importance_df['Importance']):
+        print(f'{feature}: {importance:.4f} ')
+
+    return X_full_processed, y, model, y_test, y_pred_test, y_pred_test_probability, perm_importance_df
 
 def main():
     data = get_data()
     print(data.head())
 
+    X, y = data_prep(data)
+    X_full_processed, y, model, y_test, y_pred_test, y_pred_test_probability, perm_importance_df = train_evaluate_model(X,y)
+
+    
 
 if __name__ == "__main__":
     main()
