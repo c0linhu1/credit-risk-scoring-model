@@ -85,7 +85,7 @@ def train_evaluate_model(X, y):
 
     y_pred_test = model.predict(X_test_processed)
     y_pred_test_probability = model.predict_proba(X_test_processed)[:,1]
-
+    
     print(f"\nAccuracy: {accuracy_score(y_test, y_pred_test):.4f}")
     print(f"Precision: {precision_score(y_test, y_pred_test):.4f}")
     print(f"Recall: {recall_score(y_test, y_pred_test):.4f}")

@@ -83,7 +83,22 @@ def train_evaluate_modek(X, y):
 
     model.fit(X_train_processed, y_train)
 
+    y_pred_test = model.predict(X_test_processed)
+    y_pred_test_probability = model.predict_proba(X_test_processed)[:, 1]
+
+    print(f"\nAccuracy: {accuracy_score(y_test, y_pred_test):.4f}")
+    print(f"Precision: {precision_score(y_test, y_pred_test):.4f}")
+    print(f"Recall: {recall_score(y_test, y_pred_test):.4f}")
+    print(f"AUC-ROC: {roc_auc_score(y_test, y_pred_test_probability):.4f}")
+
+    print(f"\nConfusion Matrix:")
+    print(confusion_matrix(y_test,y_pred_test))
+
+    print(f"\nClassification Report:")
+    print(classification_report(y_test, y_pred_test))
+
     
+
 
 def main():
     data = get_data()
