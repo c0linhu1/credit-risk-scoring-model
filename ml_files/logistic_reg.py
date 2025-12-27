@@ -149,7 +149,7 @@ def roc_curve_plot(y_test, y_pred_probability):
     auc = roc_auc_score(y_test, y_pred_probability)
 
     plt.figure(figsize = (10, 6))
-    plt.plot(fpr, tpr, color = 'blue', linewidth = 2, label = f"ROC Curve (AUC = {auc:.4f})")
+    plt.plot(fpr, tpr, color = 'green', linewidth = 2, label = f"ROC Curve (AUC = {auc:.4f})")
     plt.plot([0,1], [0,1], color = 'gray', linestyle = '--', label = 'Random Guess')
 
     plt.xlabel('False Positive Rate')
@@ -158,7 +158,7 @@ def roc_curve_plot(y_test, y_pred_probability):
 
     plt.legend(loc = 'lower right')
     plt.tight_layout()
-    #plt.savefig('ROC_Curve.png')
+    # plt.savefig('ROC_Curve.png')
     plt.show()
 
 def feature_importance_plot(coef_df):

@@ -110,14 +110,81 @@ def train_evaluate_model(X, y):
 
     return X_full_processed, y, model, y_test, y_pred_test, y_pred_test_probability, perm_importance_df
 
+def cross_validation(X_full_processed, y, model):
+    """Running 5-fold CV to verify model performance"""
+    accuracy_score = cross_val_score(model, X_full_processed, y, cv = 5, scoring = 'accuracy')
+    precision_score = cross_val_score(model, X_full_processed, y, cv = 5, scoring = 'precision')
+    recall_score = cross_val_score(model, X_full_processed, y, cv = 5, scoring = 'recall')
+    roc_auc_score = cross_val_score(model, X_full_processed, y, cv = 5, scoring = 'roc_auc')
+
+    print(f"\nCV Accuracy: {accuracy_score.mean():.4f} (+/- {accuracy_score.std():.4f})")
+    print(f"CV Precision: {precision_score.mean():.4f} (+/- {precision_score.std():.4f})")
+    print(f"CV Recall: {recall_score.mean():.4f} (+/- {recall_score.std():.4f})")
+    print(f"CV AUC-ROC: {roc_auc_score.mean():.4f} (+/- {roc_auc_score.std():.4f})")
+
+def confusion_matrix_plot(y_test, y_pred_test):
+    """Plotting confusion matrix heatmap"""
+    cm = confusion_matrix(y_test, y_pred_test)
+    plt.figure(figsize = (10, 6))
+    sns.heatmap(cm, annot = True, fmt = 'd', cmap = 'Oranges', 
+                xticklabels = ['Paid (0)', 'Default (1)'],
+                yticklabels = ['Paid (0)', 'Default (1)'])
+
+    plt.title('Confusion Matrix - XGBoost')
+    plt.xlabel('Predicted')
+    plt.ylabel('Actual')
+
+    plt.tight_layout()
+    # plt.savefig('Confusion_Matrix.png')
+    plt.show()
+
+def roc_curve_plot(y_test, y_pred_test_probability):
+    """Plotting the ROC Curve"""
+    # false positive rate, true positive rate
+    fpr, tpr, thresholds = roc_curve(y_test, y_pred_test_probability)
+    
+    # area under the curve
+    auc = roc_auc_score(y_test, y_pred_test_probability)
+
+    plt.figure(figsize = (10, 6))
+
+    plt.plot(fpr, tpr, color = 'orange', lw = 2, label = f'ROC CURVE (AUC = {auc:.4f})')
+    plt.plot([0,1], [0,1], color = 'gray', linestyle = '--', label = 'Random Guess')
+
+    plt.xlabel('False Positive Rate')
+    plt.ylabel('True Positive Rate')
+    plt.title('ROC Curve -  XGBoost')
+
+    plt.legend(loc = 'lower right')
+    plt.tight_layout()
+    # plt.savefig('ROC_Curve.png')
+    plt.show()
+
+def feature_importance_plot(perm_importance_df):
+    """Using a bar chart to plot the feature importance"""
+    sorted = perm_importance_df.sort_values('Importance', ascending = True)
+
+    plt.figure(figsize = (10, 6))
+    plt.barh(sorted['Feature'], sorted['Importance'], color = 'orange')
+
+    plt.xlabel('Importance')
+    plt.ylabel('Feature')
+    plt.yticks(fontsize = 7)
+    plt.title('Feature Importance')
+    plt.tight_layout()
+    # plt.savefig('Feature_Importance.png')
+    plt.show()
 def main():
     data = get_data()
     print(data.head())
 
     X, y = data_prep(data)
     X_full_processed, y, model, y_test, y_pred_test, y_pred_test_probability, perm_importance_df = train_evaluate_model(X,y)
+    cross_validation(X_full_processed, y, model)
+    confusion_matrix_plot(y_test, y_pred_test)
+    roc_curve_plot(y_test, y_pred_test_probability)
+    feature_importance_plot(perm_importance_df)
 
-    
 
 if __name__ == "__main__":
     main()

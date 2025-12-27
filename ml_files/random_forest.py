@@ -85,7 +85,7 @@ def train_evaluate_model(X, y):
 
     y_pred_test = model.predict(X_test_processed)
     y_pred_test_probability = model.predict_proba(X_test_processed)[:,1]
-    
+
     print(f"\nAccuracy: {accuracy_score(y_test, y_pred_test):.4f}")
     print(f"Precision: {precision_score(y_test, y_pred_test):.4f}")
     print(f"Recall: {recall_score(y_test, y_pred_test):.4f}")
@@ -127,7 +127,7 @@ def confusion_matrix_plot(y_test, y_pred_test):
     cm = confusion_matrix(y_test, y_pred_test)
 
     plt.figure(figsize = (10, 6))
-    sns.heatmap(cm, annot = True, fmt = 'd', cmap = 'Greens', 
+    sns.heatmap(cm, annot = True, fmt = 'd', cmap = 'Blues', 
                 xticklabels = ['Paid (0)', 'Default (1)'],
                 yticklabels = ['Paid (0)', 'Default (1)'])
 
@@ -136,7 +136,7 @@ def confusion_matrix_plot(y_test, y_pred_test):
     plt.ylabel('Actual')
 
     plt.tight_layout()
-    # plt.savefig('Confusion_Matrix.png')
+    plt.savefig('Confusion_Matrix.png')
     plt.show()
 
 def roc_curve_plot(y_test, y_pred_test_probability):
