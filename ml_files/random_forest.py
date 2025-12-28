@@ -24,13 +24,15 @@ load_dotenv()
 def get_data():
     """Connecting to PostgreSQL and pulling loans data from table"""
     engine = create_engine(
-        f"postgresql://{os.getenv('username')}:{os.getenv('password')}@{os.getenv('server_address_host')}:{os.getenv('port')}/{os.getenv('connection_name')}"
+        f"postgresql://{os.getenv('username')}:{os.getenv('password')}@{
+            os.getenv('server_address_host')}:{os.getenv('port')}/{os.getenv('connection_name')}?sslmode=require"
     )
     query = "SELECT * FROM loans"
     df = pd.read_sql(query, engine)
     engine.dispose()
+    #print(df.shape)
     df = df.dropna()
-
+    #print(df.shape)
     return df
 
 def data_prep(data):
