@@ -198,3 +198,4 @@ GROUP BY row_num, credit_history_range
 ORDER BY row_num;
 
 --SELECT * FROM default_rate_by_credit_history_length;
+
