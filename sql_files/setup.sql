@@ -145,4 +145,4 @@ SELECT 'cb_person_cred_hist_length ',
     COUNT(*) - COUNT(cb_person_cred_hist_length ),
     ROUND(100.0 * (COUNT(*) - COUNT(cb_person_cred_hist_length)) / COUNT(*), 2)
 FROM loans;
---SELECT * FROM loans LIMIT 10;
+-- SELECT * FROM loans LIMIT 10;

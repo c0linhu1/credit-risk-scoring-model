@@ -138,7 +138,7 @@ def confusion_matrix_plot(y_test, y_pred_test):
     plt.ylabel('Actual')
 
     plt.tight_layout()
-    plt.savefig('Confusion_Matrix.png')
+    # plt.savefig('Confusion_Matrix.png')
     plt.show()
 
 def roc_curve_plot(y_test, y_pred_test_probability):

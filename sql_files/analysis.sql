@@ -66,7 +66,7 @@ FROM loans
 GROUP BY age_range
 ORDER BY age_range;
 
---SELECT * FROM default_rate_by_age;
+-- SELECT * FROM default_rate_by_age;
 
 CREATE VIEW default_rate_by_income AS 
 SELECT
@@ -93,7 +93,7 @@ FROM loans
 GROUP BY row_num, income_range
 ORDER BY row_num ASC;
 
---SELECT * FROM default_rate_by_income;
+-- SELECT * FROM default_rate_by_income;
 
 CREATE VIEW default_rate_by_home_ownership AS
 SELECT
@@ -105,7 +105,7 @@ FROM loans
 GROUP BY home_type
 ORDER BY home_type;
 
---SELECT * FROM default_rate_by_home_ownership;
+-- SELECT * FROM default_rate_by_home_ownership;
 
 CREATE VIEW default_rate_by_emp_length AS 
 SELECT
@@ -130,7 +130,7 @@ WHERE person_emp_length IS NOT NULL
 GROUP BY row_num, employment_length
 ORDER BY row_num;
 
---SELECT * FROM default_rate_by_emp_length;
+-- SELECT * FROM default_rate_by_emp_length;
 
 CREATE VIEW default_rate_by_loan_intent AS 
 SELECT 
@@ -142,7 +142,7 @@ FROM loans
 GROUP BY loan_intent
 ORDER BY loan_intent;
 
---SELECT * FROM default_rate_by_loan_intent;
+-- SELECT * FROM default_rate_by_loan_intent;
 
 CREATE VIEW default_rate_by_dti AS
 SELECT
@@ -161,7 +161,7 @@ FROM loans
 GROUP BY dti_bracket
 ORDER BY dti_bracket;
 
---SELECT * FROM default_rate_by_dti;
+-- SELECT * FROM default_rate_by_dti;
 
 CREATE VIEW default_rate_by_past_defaults AS
 SELECT  
@@ -172,7 +172,7 @@ SELECT
 FROM loans
 GROUP BY past_default;
 
---SELECT * FROM default_rate_by_past_defaults;
+-- SELECT * FROM default_rate_by_past_defaults;
 
 CREATE VIEW default_rate_by_credit_history_length AS 
 SELECT
@@ -192,10 +192,10 @@ SELECT
     END AS credit_history_range,
     COUNT(*) as total_loans,
     SUM(loan_status) as defaults,
-    ROUND(100.0 * SUM(loan_status) / COUNT(*)) as default_rate
+    ROUND(100.0 * SUM(loan_status) / COUNT(*), 2) as default_rate
 FROM loans
 GROUP BY row_num, credit_history_range
 ORDER BY row_num;
 
---SELECT * FROM default_rate_by_credit_history_length;
+-- SELECT * FROM default_rate_by_credit_history_length;
 
