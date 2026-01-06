@@ -7,6 +7,8 @@ Connects to PostgreSQL db instead of pulling from csv file
 import pandas as pd
 import psycopg2
 import os
+import boto3
+from io import StringIO
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
 from sklearn.model_selection import train_test_split
@@ -22,18 +24,30 @@ import seaborn as sns
 load_dotenv()
 
 def get_data():
-    """Connecting to PostgreSQL and pulling loans data from table"""
-    engine = create_engine(
-        f"postgresql://{os.getenv('username')}:{os.getenv('password')}@{
-            os.getenv('server_address_host')}:{os.getenv('port')}/{os.getenv('connection_name')}?sslmode=require"
-    )
-    query = "SELECT * FROM loans"
-    df = pd.read_sql(query, engine)
-    engine.dispose()
-    #print(df.shape)
+    """Connecting to S3 bucket - fallback on RDS db - pulling loans data from table"""
+    try:
+        s3 = boto3.client('s3')
+        obj = s3.get_object(
+            Bucket='credit-risk-data-colin',  # bucket name
+            Key='credit_risk_dataset.csv'      # file name in S3
+        )
+        df = pd.read_csv(StringIO(obj['Body'].read().decode('utf-8')))
+        print("S3")
+
+    except:
+        engine = create_engine(
+            f"postgresql://{os.getenv('username')}:{os.getenv('password')}@{
+                os.getenv('server_address_host')}:{os.getenv('port')}/{os.getenv('connection_name')}"
+        )
+        query = "SELECT * FROM loans"
+        df = pd.read_sql(query, engine)
+        engine.dispose()
+        print('RDS')
+        
     df = df.dropna()
-    #print(df.shape)
+
     return df
+
 
 def data_prep(data):
     features = [
@@ -191,5 +205,6 @@ def main():
     confusion_matrix_plot(y_test, y_pred_test)
     roc_curve_plot(y_test, y_pred_test_probability)
     feature_importance_plot(coef_df)
+
 if __name__ == "__main__":
     main()

@@ -6,6 +6,8 @@ Comparing Gini vs Permutation importance methods by lookinh at sklearn metrics
 import pandas as pd
 import numpy as np
 import os
+import boto3
+from io import StringIO
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
 from sklearn.model_selection import train_test_split
@@ -18,15 +20,28 @@ from sklearn.inspection import permutation_importance
 load_dotenv()
 
 def get_data():
-    """Connecting to PostgreSQL and pulling loans data from table"""
-    engine = create_engine(
-        f"postgresql://{os.getenv('username')}:{os.getenv('password')}@{os.getenv('server_address_host')}:{os.getenv('port')}/{os.getenv('connection_name')}"
-    )
-    query = "SELECT * FROM loans"
-    df = pd.read_sql(query, engine)
-    engine.dispose()
-    df = df.dropna()
+    """Connecting to S3 bucket - fallback on RDS db - pulling loans data from table"""
+    try:
+        s3 = boto3.client('s3')
+        obj = s3.get_object(
+            Bucket='credit-risk-data-colin',  # bucket name
+            Key='credit_risk_dataset.csv'      # file name in S3
+        )
+        df = pd.read_csv(StringIO(obj['Body'].read().decode('utf-8')))
+        print("S3")
 
+    except:
+        engine = create_engine(
+            f"postgresql://{os.getenv('username')}:{os.getenv('password')}@{
+                os.getenv('server_address_host')}:{os.getenv('port')}/{os.getenv('connection_name')}"
+        )
+        query = "SELECT * FROM loans"
+        df = pd.read_sql(query, engine)
+        engine.dispose()
+
+        print('RDS')
+    df = df.dropna()
+    
     return df
 
 def data_prep(data):
