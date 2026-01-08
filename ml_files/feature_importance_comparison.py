@@ -25,7 +25,7 @@ def get_data():
         s3 = boto3.client('s3')
         obj = s3.get_object(
             Bucket='credit-risk-data-colin',  # bucket name
-            Key='credit_risk_dataset.csv'      # file name in S3
+            Key='credit_risk/credit_risk_dataset.csv'   # file name in S3
         )
         df = pd.read_csv(StringIO(obj['Body'].read().decode('utf-8')))
         print("S3")
@@ -41,7 +41,7 @@ def get_data():
 
         print('RDS')
     df = df.dropna()
-    
+
     return df
 
 def data_prep(data):
