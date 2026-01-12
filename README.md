@@ -31,21 +31,21 @@ Analyzing loan default patterns to identify key risk factors for lending decisio
 ## SQL Analysis - Views Created
 
 **Basic Analysis (analysis.sql):**
-overall_stats — Portfolio-level metrics
-default_rate_by_age — Default rate by age bracket
-default_rate_by_income — Default rate by income bracket
-default_rate_by_home_ownership — Default rate by housing status
-default_rate_by_emp_length — Default rate by employment length
-default_rate_by_loan_intent — Default rate by loan purpose
-default_rate_by_dti — Default rate by DTI bracket
-default_rate_by_past_defaults — Default rate by prior default history
-default_rate_by_credit_history_length — Default rate by credit history
+- overall_stats — Portfolio-level metrics
+- default_rate_by_age — Default rate by age bracket
+- default_rate_by_income — Default rate by income bracket
+- default_rate_by_home_ownership — Default rate by housing status
+- default_rate_by_emp_length — Default rate by employment length
+- default_rate_by_loan_intent — Default rate by loan purpose
+- default_rate_by_dti — Default rate by DTI bracket
+- default_rate_by_past_defaults — Default rate by prior default history
+- default_rate_by_credit_history_length — Default rate by credit history
 
 **Advanced Analysis (analysis_2.sql):**
-risk_deciles — Borrowers split into 10 risk groups using NTILE() window function
-cumulative_defaults_by_dti — Cumulative default distribution using CTEs and SUM() OVER()
-default_rate_by_income_percentile — 20 income percentiles using NTILE(20)
-credit_scoring_model — Multi-factor risk scoring combining 6 risk flags - see analysis_2.sql
+- risk_deciles — Borrowers split into 10 risk groups using NTILE() window function
+- cumulative_defaults_by_dti — Cumulative default distribution using CTEs and SUM() OVER()
+- default_rate_by_income_percentile — 20 income percentiles using NTILE(20)
+- credit_scoring_model — Multi-factor risk scoring combining 6 risk flags - see analysis_2.sql
 
 ## Machine Learning Models
 **Models Compared:**
