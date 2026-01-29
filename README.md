@@ -23,7 +23,7 @@ Analyzing loan default patterns to identify key risk factors for lending decisio
     'loan_grade': {['A', 'B', 'C', 'D', 'E', 'F', 'G']} (low risk to high risk)
 
 ## Tech Stack
-- Database: PostgreSQL (AWS RDS)
+- Database: PostgreSQL (AWS RDS) - used s3 buckets as well 
 - Languages: SQL, Python
 - ML Libraries: scikit-learn, XGBoost
 - Visualization: Matplotlib, Seaborn, Tableau
